@@ -146,6 +146,28 @@
             }
             return w;
         };
+
+        refresh.calSceneHeight = function() {
+            // select children from current scene
+            var firstCh = scene * settings.item,
+                lastCh = firstCh + settings.item;
+            // adapt children selection for last slide
+            if (lastCh > $children.length) {
+                firstCh = $children.length - settings.item;
+                lastCh = $children.length;
+            }
+
+            var $sceneCh = $children.slice(firstCh, lastCh),
+                adaptedH = 0;
+
+            // get selected children's largest height
+            $sceneCh.each(function() {
+                adaptedH = Math.max(adaptedH, $(this).outerHeight(true));
+            });
+
+            return adaptedH;
+        };
+
         plugin = {
             doCss: function () {
                 var support = function () {
@@ -378,7 +400,7 @@
                         }
                     }
                     var $cSouter = $slide.parent();
-                    $cSouter.find('.lSPager').html(pagers); 
+                    $cSouter.find('.lSPager').html(pagers);
                     if (settings.gallery === true) {
                         if (settings.vertical === true) {
                             // set Gallery thumbnail width
@@ -451,7 +473,7 @@
                         setCss();
                         if (!interval) {
                             $this.auto();
-                        }   
+                        }
                     }else{
                         obj.find('img').load(function () {
                             setTimeout(function () {
@@ -877,7 +899,7 @@
                 $(window).on('focus', function(){
                     $this.auto();
                 });
-                
+
                 $(window).on('blur', function(){
                     clearInterval(interval);
                 });
@@ -921,7 +943,7 @@
                 refresh.createPager();
             }
             if (settings.adaptiveHeight === true && settings.vertical === false) {
-                $el.css('height', $children.eq(scene).outerHeight(true));
+                $el.css('height', refresh.calSceneHeight());
             }
             if (settings.adaptiveHeight === false) {
                 if (settings.mode === 'slide') {
@@ -1012,7 +1034,7 @@
         };
         $el.mode = function (_touch) {
             if (settings.adaptiveHeight === true && settings.vertical === false) {
-                $el.css('height', $children.eq(scene).outerHeight(true));
+                $el.css('height', refresh.calSceneHeight());
             }
             if (on === false) {
                 if (settings.mode === 'slide') {
@@ -1080,7 +1102,7 @@
                 }
             }
             return sc + 1;
-        }; 
+        };
         $el.getTotalSlideCount = function () {
             return $slide.find('.lslide').length;
         };
@@ -1105,7 +1127,7 @@
                 $el.refresh = function(){};
                 $el.getCurrentSlideCount = function(){};
                 $el.getTotalSlideCount = function(){};
-                $el.goToSlide = function(){}; 
+                $el.goToSlide = function(){};
                 $el.lightSlider = null;
                 refresh = {
                     init : function(){}
